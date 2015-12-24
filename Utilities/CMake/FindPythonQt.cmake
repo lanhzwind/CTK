@@ -21,8 +21,24 @@ find_path(PYTHONQT_INCLUDE_DIR PythonQt.h
   PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
         "${PYTHONQT_INSTALL_DIR}/src"
   DOC "Path to the PythonQt include directory")
+find_path(PYTHONQT_INCLUDE_DIR2 PythonQt_QtAll.h
+  PATHS "${PYTHONQT_INSTALL_DIR}/extensions/PythonQt_QtAll"
+  DOC "Path to the PythonQt_QtAll include directory")  
+find_path(PYTHONQT_INCLUDE_DIR3 PythonQtScriptingConsole.h
+  PATHS "${PYTHONQT_INSTALL_DIR}/src/gui"
+  DOC "Path to the PythonQtScriptingConsole include directory")
+if(PYTHONQT_INCLUDE_DIR2)
+  set(PYTHONQT_INCLUDE_DIR ${PYTHONQT_INCLUDE_DIR} ${PYTHONQT_INCLUDE_DIR2})
+endif()
+if(PYTHONQT_INCLUDE_DIR3)
+  set(PYTHONQT_INCLUDE_DIR ${PYTHONQT_INCLUDE_DIR} ${PYTHONQT_INCLUDE_DIR3})
+endif()
+
 find_library(PYTHONQT_LIBRARY_RELEASE PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
 find_library(PYTHONQT_LIBRARY_DEBUG NAMES PythonQt${CTK_CMAKE_DEBUG_POSTFIX} PythonQt${CMAKE_DEBUG_POSTFIX} PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+find_library(PYTHONQT_QTALL_LIBRARY_RELEASE PythonQt_QtAll PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt_QtAll library.")
+find_library(PYTHONQT_QTALL_LIBRARY_DEBUG NAMES PythonQt_QtAll${CTK_CMAKE_DEBUG_POSTFIX} PythonQt_QtAll${CMAKE_DEBUG_POSTFIX} PythonQt_QtAll PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt_QtAll library.")
+
 set(PYTHONQT_LIBRARY)
 if(PYTHONQT_LIBRARY_RELEASE)
   list(APPEND PYTHONQT_LIBRARY optimized ${PYTHONQT_LIBRARY_RELEASE})
@@ -30,11 +46,19 @@ endif()
 if(PYTHONQT_LIBRARY_DEBUG)
   list(APPEND PYTHONQT_LIBRARY debug ${PYTHONQT_LIBRARY_DEBUG})
 endif()
+if(PYTHONQT_QTALL_LIBRARY_RELEASE)
+  list(APPEND PYTHONQT_LIBRARY optimized ${PYTHONQT_QTALL_LIBRARY_RELEASE})
+endif()
+if(PYTHONQT_QTALL_LIBRARY_DEBUG)
+  list(APPEND PYTHONQT_LIBRARY debug ${PYTHONQT_QTALL_LIBRARY_DEBUG})
+endif()
 
 mark_as_advanced(PYTHONQT_INSTALL_DIR)
 mark_as_advanced(PYTHONQT_INCLUDE_DIR)
 mark_as_advanced(PYTHONQT_LIBRARY_RELEASE)
 mark_as_advanced(PYTHONQT_LIBRARY_DEBUG)
+mark_as_advanced(PYTHONQT_QTALL_LIBRARY_RELEASE)
+mark_as_advanced(PYTHONQT_QTALL_LIBRARY_DEBUG)
 
 # On linux, also find libutil
 if(UNIX AND NOT APPLE)

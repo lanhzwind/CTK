@@ -32,13 +32,8 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   # Enable Qt libraries PythonQt wrapping if required
-  if (CTK_QT_VERSION VERSION_GREATER "4")
-    set(qtlibs Core Gui Widgets Network OpenGL PrintSupport Sql Svg UiTools WebKit WebKitWidgets Xml)
-  else()
-    list(APPEND ep_PythonQt_args
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-    set(qtlibs core gui network opengl sql svg uitools webkit xml)
+  if (CTK_QT_VERSION MATCHES 5)
+    set(qtlibs core gui network opengl sql svg uitools webkit xml xmlpatterns multimedia qml quick)
   endif()
 
   # Set desired qt version for PythonQt
@@ -55,6 +50,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       string(TOUPPER ${qtlib} qtlib_uppercase)
       set(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase} ON CACHE BOOL "Enable Scripting/Python/Core Library PYTHONQT_WRAP_QT${qtlib_uppercase} option" FORCE)
     endforeach()
+    list(APPEND ep_PythonQt_args -DPythonQt_Wrap_QtAll:BOOL=ON)
   endif()
 
   # Python is required
@@ -63,7 +59,8 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
   endif()
 
-  set(revision_tag 1afe4f8906345063b25047652e8962f641010a55)
+  set(revision_tag simvascular-patch-3.1)
+
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -75,7 +72,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                       GIT_TAG ${revision_tag})
   else()
-    set(location_args GIT_REPOSITORY "${git_protocol}://github.com/commontk/PythonQt.git"
+    set(location_args GIT_REPOSITORY "${git_protocol}://github.com/SimVascular/PythonQt.git"
                       GIT_TAG ${revision_tag})
   endif()
 
@@ -88,7 +85,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     BUILD_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+     "-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}"
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_INCLUDE_DIR2:PATH=${PYTHON_INCLUDE_DIR2}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
